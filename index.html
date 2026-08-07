@@ -180,8 +180,8 @@
   .aviso-item .ai-title{font-weight:600; font-size:14px; margin-bottom:2px;}
   .aviso-item .ai-msg{font-size:12.5px; color:var(--text-mid); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .aviso-thumb{width:44px; height:44px; border-radius:7px; object-fit:cover; flex-shrink:0; border:1px solid var(--line); background:var(--bg-panel-raised);}
-  .colab-avatar{width:36px; height:36px; border-radius:50%; object-fit:cover; display:block; border:1px solid var(--line);}
-  .colab-avatar-empty{display:flex; align-items:center; justify-content:center; background:var(--bg-panel-raised-2); color:var(--text-mid); font-weight:700; font-size:14px;}
+  .colab-avatar{width:44px; height:44px; border-radius:50%; object-fit:cover; display:block; border:1px solid var(--line);}
+  .colab-avatar-empty{display:flex; align-items:center; justify-content:center; background:var(--bg-panel-raised-2); color:var(--text-mid); font-weight:700; font-size:16px;}
 
   .imgup{border:1.5px dashed var(--line); border-radius:10px; padding:16px; text-align:center; cursor:pointer; transition:all .15s ease; background:var(--bg-panel);}
   .imgup:hover{border-color:var(--accent-amber); background:var(--bg-panel-raised);}
@@ -263,14 +263,29 @@
   .tv-unlock-dot:hover{opacity:0.75; transform:scale(1.3);}
 
   .tv-progress{height:4px; background:var(--bg-panel); margin:0 54px; border-radius:3px; overflow:hidden;}
-  .tv-road-strip{position:relative; height:26px; overflow:hidden; background:linear-gradient(180deg, var(--bg-panel), var(--bg-void)); border-bottom:1px solid var(--line);}
+  .tv-road-strip{position:relative; height:34px; overflow:hidden; background:linear-gradient(180deg, var(--bg-panel), var(--bg-void)); border-bottom:1px solid var(--line); cursor:pointer;}
+  .tv-road-strip:hover .tv-road-vehicle{filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4)) brightness(1.2);}
   .tv-road-lines{position:absolute; left:0; right:0; top:50%; height:3px; margin-top:-1.5px; background-image:repeating-linear-gradient(90deg, var(--text-low) 0 24px, transparent 24px 46px); opacity:0.55; animation:tvRoadMove 1.6s linear infinite;}
-  .tv-road-vehicle{position:absolute; bottom:2px; left:-70px; width:52px; height:22px; color:var(--accent-amber); animation:tvDriveAcross 16s linear infinite; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4));}
+  .tv-road-lines.paused{animation-play-state:paused;}
+  .tv-road-vehicle{position:absolute; bottom:3px; left:-70px; width:56px; height:26px; color:var(--accent-amber); animation:tvDriveAcross 18s linear infinite, tvTruckBounce 0.4s ease-in-out infinite; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4));}
+  .tv-road-vehicle.paused{animation-play-state:paused, paused;}
   .tv-road-vehicle svg{width:100%; height:100%;}
   @keyframes tvRoadMove{ from{background-position-x:0;} to{background-position-x:-46px;} }
   @keyframes tvDriveAcross{ 0%{left:-70px;} 100%{left:100%;} }
+  @keyframes tvTruckBounce{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-2.5px);} }
+  .tv-road-forklift{display:none; position:absolute; right:6%; bottom:2px; width:44px; height:30px; color:var(--accent-teal); opacity:0; transition:opacity .3s ease;}
+  .tv-road-forklift.show{display:block; opacity:1;}
+  .tv-road-forklift svg{width:100%; height:100%;}
+  .tv-forklift-fork{animation:tvForkLift 1.3s ease-in-out infinite; transform-origin:18px 18px;}
+  @keyframes tvForkLift{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-7px);} }
   .tv-progress-bar{height:100%; background:linear-gradient(90deg, var(--accent-amber), var(--accent-teal)); width:0%; transition:width linear;}
+  .tv-body-wrap{position:relative; flex:1; min-height:0; display:flex;}
   .tv-body{flex:1; padding:0; overflow:hidden; position:relative;}
+  .tv-nav-arrow{position:absolute; top:50%; margin-top:-26px; width:52px; height:52px; border-radius:50%; background:rgba(22,28,33,0.55); border:1px solid var(--line); color:var(--text-hi); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:20; opacity:0.5; transition:opacity .2s ease, background .2s ease;}
+  .tv-nav-arrow:hover{opacity:1; background:rgba(22,28,33,0.85);}
+  .tv-nav-arrow svg{width:24px; height:24px;}
+  .tv-nav-prev{left:14px;}
+  .tv-nav-next{right:14px;}
   .tv-slide{position:absolute; inset:24px 54px 20px 54px; opacity:0; transform:translateX(24px); transition:opacity .5s ease, transform .5s ease; pointer-events:none; overflow:hidden;}
   .tv-slide.showing{opacity:1; transform:translateX(0); pointer-events:auto;}
   .tv-scroll{height:100%; overflow-y:auto; scrollbar-width:none; -ms-overflow-style:none;}
@@ -303,6 +318,12 @@
   .tv-lunch-pill{font-family:'JetBrains Mono',monospace; background:var(--bg-panel); border:1px solid var(--line); padding:5px 11px; border-radius:20px; font-size:15px; color:var(--text-hi);}
   .tv-colab-avatar{width:40px; height:40px; border-radius:50%; object-fit:cover; display:block; border:1px solid var(--line);}
   .tv-colab-avatar-empty{display:flex; align-items:center; justify-content:center; background:var(--bg-panel-raised-2); color:var(--text-mid); font-weight:700; font-size:15px;}
+  .tv-colab-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:16px; align-content:start;}
+  .tv-colab-card{display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; background:var(--bg-panel); border:1px solid var(--line); border-radius:14px; padding:16px 10px;}
+  .tv-colab-photo{width:84px; height:84px; border-radius:50%; object-fit:cover; border:2px solid var(--line);}
+  .tv-colab-photo-empty{display:flex; align-items:center; justify-content:center; background:var(--bg-panel-raised-2); color:var(--text-mid); font-weight:700; font-size:32px;}
+  .tv-colab-name{font-weight:700; font-size:16px; line-height:1.2;}
+  .tv-colab-aloc{font-size:12.5px; color:var(--text-mid); line-height:1.3;}
   .tv-obs{font-size:14px; color:var(--text-low); font-style:italic;}
   @media (max-width:1000px){ .tv-general-grid{grid-template-columns:1fr;} .tv-title{font-size:24px;} .tv-clock{font-size:32px;} }
 
@@ -424,12 +445,29 @@
       </div>
     </div>
   </div>
-  <div class="tv-road-strip" aria-hidden="true">
-    <div class="tv-road-lines"></div>
+  <div class="tv-road-strip" id="tvRoadStrip" title="Clique para pausar ou retomar a rotação" role="button" tabindex="0">
+    <div class="tv-road-lines" id="tvRoadLines"></div>
+    <div class="tv-road-forklift" id="tvForklift">
+      <svg viewBox="0 0 40 30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="14" width="14" height="10" rx="1.5"/>
+        <circle cx="6" cy="26" r="3"/>
+        <circle cx="14" cy="26" r="3"/>
+        <path d="M18 4v22"/>
+        <path d="M18 4h4"/>
+        <g class="tv-forklift-fork">
+          <path d="M18 17h6"/>
+          <rect x="24" y="11" width="10" height="10" rx="1.2"/>
+        </g>
+      </svg>
+    </div>
     <div class="tv-road-vehicle" id="tvRoadVehicle"></div>
   </div>
   <div class="tv-progress"><div class="tv-progress-bar" id="tvProgressBar"></div></div>
-  <div class="tv-body" id="tvBody"></div>
+  <div class="tv-body-wrap">
+    <button class="tv-nav-arrow tv-nav-prev" id="tvPrevBtn" aria-label="Slide anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <div class="tv-body" id="tvBody"></div>
+    <button class="tv-nav-arrow tv-nav-next" id="tvNextBtn" aria-label="Próximo slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+  </div>
   <div class="tv-dots" id="tvDots"></div>
 </div>
 
@@ -533,7 +571,8 @@ function defaultLayout(){
   return [
     {id:'agendamentos', tipo:'quadro', visible:true, duracao:null},
     {id:'colaboradores', tipo:'quadro', visible:true, duracao:null},
-    {id:'geral', tipo:'quadro', visible:true, duracao:null},
+    {id:'treinamentos', tipo:'quadro', visible:true, duracao:null},
+    {id:'inspecoes', tipo:'quadro', visible:true, duracao:null},
   ];
 }
 function defaultState(){
@@ -573,10 +612,20 @@ let state = defaultState();
 
 function syncLayoutWithAvisos(){
   const layout = state.config.layout;
+  // Migração: quem ainda tem o item antigo 'geral' (uma tela só) vira dois
+  // itens separados (treinamentos e inspecoes), no mesmo lugar da lista.
+  const geralIdx = layout.findIndex(l=>l.tipo==='quadro' && l.id==='geral');
+  if(geralIdx>=0){
+    const old = layout[geralIdx];
+    layout.splice(geralIdx, 1,
+      {id:'treinamentos', tipo:'quadro', visible:old.visible, duracao:old.duracao},
+      {id:'inspecoes', tipo:'quadro', visible:old.visible, duracao:old.duracao}
+    );
+  }
   const existingIds = new Set(layout.filter(l=>l.tipo==='aviso').map(l=>l.id));
   state.avisos.forEach(a=>{ if(!existingIds.has(a.id)) layout.push({id:a.id, tipo:'aviso', visible:true, duracao:null}); });
   state.config.layout = layout.filter(l=> l.tipo==='quadro' || state.avisos.some(a=>a.id===l.id));
-  ['agendamentos','colaboradores','geral'].forEach(k=>{ if(!layout.some(l=>l.id===k)) state.config.layout.push({id:k, tipo:'quadro', visible:true, duracao:null}); });
+  ['agendamentos','colaboradores','treinamentos','inspecoes'].forEach(k=>{ if(!layout.some(l=>l.id===k)) state.config.layout.push({id:k, tipo:'quadro', visible:true, duracao:null}); });
 }
 
 let isRemoteUpdate = false; // evita reenviar ao Firestore o que acabou de chegar dele
@@ -901,31 +950,45 @@ function exportAgendamentosPDF(ids){
   const rows = state.agendamentos.filter(a=>ids.includes(a.id)).slice().sort((a,b)=>a.data.localeCompare(b.data));
   if(rows.length===0){ toast('Selecione ao menos um agendamento', ICONS.x); return; }
   const datas = Array.from(new Set(rows.map(r=>r.data))).sort();
-  const tituloData = datas.length===1 ? fmtDate(datas[0]) : `${fmtDate(datas[0])} a ${fmtDate(datas[datas.length-1])}`;
+  const somenteUmDia = datas.length===1;
+  const tituloData = somenteUmDia ? fmtDate(datas[0]) : `${fmtDate(datas[0])} a ${fmtDate(datas[datas.length-1])}`;
+  const diaSemana = somenteUmDia ? new Date(datas[0]+'T00:00:00').toLocaleDateString('pt-BR',{weekday:'long'}) : `${datas.length} datas diferentes`;
+  const logoSrc = (ICONS.logo.match(/src="([^"]+)"/)||[])[1] || '';
   const win = window.open('', '_blank');
   win.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
     <title>Agendamentos — ${esc(tituloData)}</title>
     <style>
-      @page{ size:A4; margin:16mm; }
-      body{ font-family:Arial, Helvetica, sans-serif; color:#111; margin:0; }
-      h1{ font-size:20px; margin:0 0 2px 0; }
-      .sub{ color:#555; font-size:12px; margin-bottom:18px; }
-      table{ width:100%; border-collapse:collapse; font-size:12px; }
-      th, td{ border:1px solid #ccc; padding:7px 8px; text-align:left; }
-      th{ background:#f0f0f0; text-transform:uppercase; font-size:10.5px; letter-spacing:0.02em; }
-      tr:nth-child(even){ background:#fafafa; }
-      .status{ font-weight:bold; }
-      .status-aguardando{ color:#b8710a; }
-      .status-recebido{ color:#0a8f6f; }
-      .status-nao_recebido{ color:#c0392b; }
-      .footer{ margin-top:22px; font-size:10.5px; color:#888; }
+      @page{ size:A4; margin:14mm; }
+      *{ box-sizing:border-box; }
+      body{ font-family:Arial, Helvetica, sans-serif; color:#1a2530; margin:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      .header{ display:flex; align-items:center; gap:16px; background:linear-gradient(135deg,#29A9E0,#12608A); color:#fff; padding:18px 22px; border-radius:12px; margin-bottom:16px; }
+      .header .mark{ width:48px; height:48px; border-radius:10px; background:rgba(255,255,255,0.14); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+      .header .mark img{ width:32px; height:32px; }
+      .header h1{ font-size:17px; margin:0; text-transform:uppercase; letter-spacing:0.04em; }
+      .header .sub{ font-size:12px; opacity:0.88; margin-top:3px; }
+      .datebar{ display:flex; align-items:center; justify-content:space-between; background:#eaf6fc; border:1px solid #bfe3f4; border-radius:10px; padding:14px 20px; margin-bottom:18px; }
+      .datebar .lbl{ font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em; color:#12608A; font-weight:700; margin-bottom:3px; }
+      .datebar .big-date{ font-size:25px; font-weight:800; color:#0d4a68; text-transform:capitalize; }
+      .datebar .meta{ font-size:11px; color:#5c6a72; text-align:right; line-height:1.6; }
+      table{ width:100%; border-collapse:collapse; font-size:11.5px; }
+      th{ background:#12608A; color:#fff; text-transform:uppercase; font-size:9.5px; letter-spacing:0.03em; padding:9px 8px; text-align:left; }
+      th:first-child{ border-radius:6px 0 0 0; } th:last-child{ border-radius:0 6px 0 0; }
+      td{ padding:8px 8px; border-bottom:1px solid #e2e8ec; }
+      tr:nth-child(even) td{ background:#f6fafc; }
+      .footer{ margin-top:20px; font-size:9.5px; color:#98a4ac; text-align:center; }
       @media print{ .no-print{ display:none; } }
     </style>
   </head><body>
-    <h1>${esc(state.config.titulo||'Painel Gestão à Vista')} — Agendamentos</h1>
-    <div class="sub">${esc(state.config.subtitulo||'')} · ${esc(tituloData)} · ${rows.length} registro(s) · gerado em ${new Date().toLocaleString('pt-BR')}</div>
+    <div class="header">
+      <div class="mark">${logoSrc?`<img src="${logoSrc}" alt="">`:''}</div>
+      <div><h1>${esc(state.config.titulo||'Painel Gestão à Vista')}</h1><div class="sub">${esc(state.config.subtitulo||'')} — Agendamentos</div></div>
+    </div>
+    <div class="datebar">
+      <div><div class="lbl">${somenteUmDia?'Carga do dia':'Período'}</div><div class="big-date">${esc(diaSemana)} — ${esc(tituloData)}</div></div>
+      <div class="meta">${rows.length} registro(s)<br>gerado em ${new Date().toLocaleString('pt-BR')}</div>
+    </div>
     <table>
-      <thead><tr><th>Data</th><th>Veículo</th><th>Senha</th><th>Transportador</th><th>Motorista</th><th>Carga</th><th>Descarregamento</th><th>Status</th></tr></thead>
+      <thead><tr><th>Data</th><th>Veículo</th><th>Senha</th><th>Transportador</th><th>Motorista</th><th>Carga</th><th>Descarregamento</th></tr></thead>
       <tbody>
         ${rows.map(r=>`<tr>
           <td>${esc(fmtDate(r.data))}</td>
@@ -935,11 +998,10 @@ function exportAgendamentosPDF(ids){
           <td>${esc(r.motorista)}</td>
           <td>${esc(r.carga)}</td>
           <td>${esc(r.local)}</td>
-          <td class="status status-${r.status}">${esc((AG_STATUS_MAP[r.status]||AG_STATUS_MAP.aguardando)[1])}</td>
         </tr>`).join('')}
       </tbody>
     </table>
-    <div class="footer">Documento gerado automaticamente pelo Painel Gestão à Vista — GALOG.</div>
+    <div class="footer">Documento gerado automaticamente pelo ${esc(state.config.titulo||'Painel Gestão à Vista')} — GALOG.</div>
     <script>window.onload = () => setTimeout(()=>window.print(), 200);<\/script>
   </body></html>`);
   win.document.close();
@@ -1136,7 +1198,7 @@ function tplAvisosTab(){
 
 function layoutItemMeta(item){
   if(item.tipo==='quadro'){
-    const map = { agendamentos:{label:'Agendamentos do Dia', icon:ICONS.agendamentos}, colaboradores:{label:'Colaboradores', icon:ICONS.colaboradores}, geral:{label:'Informações Gerais (2 telas: Treinamentos + Inspeção 5S)', icon:ICONS.geral} };
+    const map = { agendamentos:{label:'Agendamentos do Dia', icon:ICONS.agendamentos}, colaboradores:{label:'Colaboradores', icon:ICONS.colaboradores}, treinamentos:{label:'Treinamentos a Vencer', icon:ICONS.clock}, inspecoes:{label:'Inspeção 5S', icon:ICONS.check} };
     return map[item.id] || {label:item.id, icon:ICONS.geral};
   }
   const aviso = state.avisos.find(a=>a.id===item.id);
@@ -2013,20 +2075,15 @@ let tvTimerStart = 0;
 let tvRAF = null;
 let tvActive = false;
 let tvDateFilter = 'hoje';
+let tvPaused = false;
+let tvPauseAccum = 0;
+let tvPauseStartedAt = 0;
 
 function buildTvSlides(){
   const slides = [];
   state.config.layout.filter(l=>l.visible).forEach(l=>{
     if(l.tipo==='quadro'){
-      if(l.id==='geral'){
-        /* Dividido em dois slides cheios (um para Treinamentos, outro para
-           Inspeção 5S) em vez de duas colunas espremidas — assim cada um
-           tem a tela toda e pode rolar sozinho se tiver muitos registros. */
-        slides.push({type:'treinamentos', duracao:l.duracao});
-        slides.push({type:'inspecoes', duracao:l.duracao});
-      } else {
-        slides.push({type:l.id, duracao:l.duracao});
-      }
+      slides.push({type:l.id, duracao:l.duracao});
     }
     else { const a = state.avisos.find(x=>x.id===l.id); if(a) slides.push({type:'aviso', data:a, duracao:l.duracao}); }
   });
@@ -2076,7 +2133,29 @@ document.getElementById('btnTvMode').addEventListener('click', enterTvMode);
 document.getElementById('btnEditMode').addEventListener('click', exitTvMode);
 document.getElementById('btnUnlockDot').addEventListener('click', requestUnlock);
 document.getElementById('tvDateFilterSelect').addEventListener('change', e=>{ tvDateFilter = e.target.value; if(tvSlides[tvIndex] && tvSlides[tvIndex].type==='agendamentos') renderTvSlide(); });
-document.addEventListener('keydown', e=>{ if(e.key==='Escape' && tvActive) requestUnlock(); });
+document.addEventListener('keydown', e=>{
+  if(!tvActive) return;
+  if(e.key==='Escape') requestUnlock();
+  else if(e.key==='ArrowRight') nextTvSlide();
+  else if(e.key==='ArrowLeft') prevTvSlide();
+  else if(e.key===' '){ e.preventDefault(); toggleTvPause(); }
+});
+document.getElementById('tvPrevBtn').addEventListener('click', e=>{ e.stopPropagation(); prevTvSlide(); });
+document.getElementById('tvNextBtn').addEventListener('click', e=>{ e.stopPropagation(); nextTvSlide(); });
+document.getElementById('tvRoadStrip').addEventListener('click', toggleTvPause);
+document.getElementById('tvRoadStrip').addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); toggleTvPause(); } });
+
+function toggleTvPause(){
+  tvPaused = !tvPaused;
+  const vehicle = document.getElementById('tvRoadVehicle');
+  const lines = document.getElementById('tvRoadLines');
+  const forklift = document.getElementById('tvForklift');
+  vehicle.classList.toggle('paused', tvPaused);
+  lines.classList.toggle('paused', tvPaused);
+  forklift.classList.toggle('show', tvPaused);
+  if(tvPaused){ tvPauseStartedAt = performance.now(); }
+  else { tvPauseAccum += performance.now() - tvPauseStartedAt; }
+}
 
 function currentSlideDuration(){
   const s = tvSlides[tvIndex];
@@ -2085,10 +2164,12 @@ function currentSlideDuration(){
 }
 function startTvTimer(){
   tvTimerStart = performance.now();
+  tvPauseAccum = 0;
   cancelAnimationFrame(tvRAF);
   const durationMs = currentSlideDuration()*1000;
   function step(now){
-    const elapsed = now - tvTimerStart;
+    if(tvPaused){ tvRAF = requestAnimationFrame(step); return; }
+    const elapsed = (now - tvTimerStart) - tvPauseAccum;
     const progress = Math.min(1, elapsed/durationMs);
     document.getElementById('tvProgressBar').style.width = (progress*100)+'%';
     const scrollEl = document.getElementById('tvScroll');
@@ -2113,6 +2194,7 @@ function startTvTimer(){
   tvRAF = requestAnimationFrame(step);
 }
 function nextTvSlide(){ if(tvSlides.length===0) return; tvIndex=(tvIndex+1)%tvSlides.length; renderTvSlide(); startTvTimer(); }
+function prevTvSlide(){ if(tvSlides.length===0) return; tvIndex=(tvIndex-1+tvSlides.length)%tvSlides.length; renderTvSlide(); startTvTimer(); }
 function gotoTvSlide(i){ tvIndex=i; renderTvSlide(); startTvTimer(); }
 
 function renderTvSlide(){
@@ -2131,6 +2213,7 @@ function tvBadgeAgendamentoBtn(r){
   const [bg,fg,label] = AG_STATUS_TV_MAP[r.status] || AG_STATUS_TV_MAP.aguardando;
   return `<span class="tv-badge clickable" data-tvtoggle="${r.id}" style="background:${bg}; color:${fg};"><span class="bdot" style="background:${fg}"></span>${label}</span>`;
 }
+const COLAB_STATUS_PRIORITY = {presente:0, almoco:0, folga:1, ausente:2, ferias:2};
 function tvBadgeColaborador(status){
   const map = {presente:['var(--accent-teal-dim)','var(--accent-teal)','Presente'], almoco:['var(--accent-amber-dim)','var(--accent-amber)','Almoço'], ferias:['var(--accent-violet-dim)','var(--accent-violet)','Férias'], folga:['var(--bg-panel)','var(--text-low)','Folga'], ausente:['var(--accent-red-dim)','#ff8fa3','Ausente']};
   const [bg,fg,label] = map[status]||map.presente;
@@ -2165,20 +2248,25 @@ function tvSlideHtml(slide){
         </tr>`).join('')}</tbody></table></div>`}`;
   }
   if(slide.type==='colaboradores'){
-    const rows = state.colaboradores;
+    const rows = state.colaboradores.slice().sort((a,b)=>{
+      const pa = COLAB_STATUS_PRIORITY[colabDisplayStatus(a)] ?? 1;
+      const pb = COLAB_STATUS_PRIORITY[colabDisplayStatus(b)] ?? 1;
+      if(pa!==pb) return pa-pb;
+      return a.nome.localeCompare(b.nome);
+    });
     return `<div class="tv-slide-title">${ICONS.colaboradores}Colaboradores</div>
       ${rows.length===0? `<div class="tv-empty">Nenhum colaborador cadastrado.</div>` : `
-      <div style="border:1px solid var(--line); border-radius:12px; overflow:hidden;">
-      <table class="tv-table"><thead><tr><th style="width:56px;"></th><th>Nome</th><th>Almoço</th><th>Alocação</th><th>Status</th><th>Observações</th></tr></thead>
-      <tbody>${rows.map(r=>`
-        <tr>
-          <td>${r.foto ? `<img src="${r.foto}" class="tv-colab-avatar" alt="">` : `<div class="tv-colab-avatar tv-colab-avatar-empty">${esc((r.nome||'?').charAt(0).toUpperCase())}</div>`}</td>
-          <td class="cell-strong">${esc(r.nome)}</td>
-          <td><span class="tv-lunch-pill">${esc(r.almoco)}</span></td>
-          <td>${esc(alocacaoLabel(r))}</td>
-          <td>${tvBadgeColaborador(colabDisplayStatus(r))}</td>
-          <td class="tv-obs">${esc(r.observacoes)||'—'}</td>
-        </tr>`).join('')}</tbody></table></div>`}`;
+      <div class="tv-colab-grid">
+        ${rows.map(r=>{
+          const status = colabDisplayStatus(r);
+          return `<div class="tv-colab-card">
+            ${r.foto ? `<img src="${r.foto}" class="tv-colab-photo" alt="">` : `<div class="tv-colab-photo tv-colab-photo-empty">${esc((r.nome||'?').charAt(0).toUpperCase())}</div>`}
+            <div class="tv-colab-name">${esc(r.nome)}</div>
+            <div class="tv-colab-aloc">${esc(alocacaoLabel(r))}</div>
+            ${tvBadgeColaborador(status)}
+          </div>`;
+        }).join('')}
+      </div>`}`;
   }
   if(slide.type==='treinamentos'){
     const tr = state.treinamentos.slice().sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
