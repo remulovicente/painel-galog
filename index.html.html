@@ -519,7 +519,14 @@ let db = null, auth = null, painelDocRef = null, firebaseReady = false;
 const ADMIN_EMAIL = 'remulo.vicente@hydro.com';
 try{
   if(typeof firebase === 'undefined') throw new Error('SDK do Firebase não carregou.');
-  if(FIREBASE_CONFIG.apiKey.includes('COLE_AQUI')) throw new Error('Chaves do Firebase ainda não foram configuradas.');
+  if(FIREBASE_CONFIG.apiKey.includes('const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBo5dJf2urGZjCis4tHembWmFSbmTYSqDg",
+  authDomain: "painel-novo-galog.firebaseapp.com",
+  projectId: "painel-novo-galog",
+  storageBucket: "painel-novo-galog.firebasestorage.app",
+  messagingSenderId: "404063366167",
+  appId: "1:404063366167:web:7d4aefa56a6875ed9b8052"
+};')) throw new Error('Chaves do Firebase ainda não foram configuradas.');
   firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.firestore();
   auth = firebase.auth();
