@@ -273,11 +273,17 @@
   @keyframes tvRoadMove{ from{background-position-x:0;} to{background-position-x:-46px;} }
   @keyframes tvDriveAcross{ 0%{left:-70px;} 100%{left:100%;} }
   @keyframes tvTruckBounce{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-2.5px);} }
-  .tv-road-forklift{display:none; position:absolute; right:6%; bottom:2px; width:44px; height:30px; color:var(--accent-teal); opacity:0; transition:opacity .3s ease;}
+  .tv-road-forklift{display:none; position:absolute; bottom:3px; left:0; width:40px; height:28px; color:var(--accent-teal); opacity:0; transition:opacity .35s ease, left .25s ease; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.35));}
   .tv-road-forklift.show{display:block; opacity:1;}
-  .tv-road-forklift svg{width:100%; height:100%;}
-  .tv-forklift-fork{animation:tvForkLift 1.3s ease-in-out infinite; transform-origin:18px 18px;}
-  @keyframes tvForkLift{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-7px);} }
+  .tv-road-forklift svg{width:100%; height:100%; transform:scaleX(-1);}
+  .tv-forklift-fork{animation:tvForkWork 1.5s ease-in-out infinite; transform-origin:18px 17px;}
+  @keyframes tvForkWork{
+    0%,100%{ transform:translate(0,0); }
+    35%{ transform:translate(-2.5px,-8px); }
+    65%{ transform:translate(-2.5px,-8px); }
+  }
+  .tv-forklift-body{animation:tvForkliftRock 1.5s ease-in-out infinite;}
+  @keyframes tvForkliftRock{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-1px);} }
   .tv-progress-bar{height:100%; background:linear-gradient(90deg, var(--accent-amber), var(--accent-teal)); width:0%; transition:width linear;}
   .tv-body-wrap{position:relative; flex:1; min-height:0; display:flex;}
   .tv-body{flex:1; padding:0; overflow:hidden; position:relative;}
@@ -449,11 +455,13 @@
     <div class="tv-road-lines" id="tvRoadLines"></div>
     <div class="tv-road-forklift" id="tvForklift">
       <svg viewBox="0 0 40 30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="14" width="14" height="10" rx="1.5"/>
-        <circle cx="6" cy="26" r="3"/>
-        <circle cx="14" cy="26" r="3"/>
-        <path d="M18 4v22"/>
-        <path d="M18 4h4"/>
+        <g class="tv-forklift-body">
+          <rect x="2" y="14" width="14" height="10" rx="1.5"/>
+          <circle cx="6" cy="26" r="3"/>
+          <circle cx="14" cy="26" r="3"/>
+          <path d="M18 4v22"/>
+          <path d="M18 4h4"/>
+        </g>
         <g class="tv-forklift-fork">
           <path d="M18 17h6"/>
           <rect x="24" y="11" width="10" height="10" rx="1.2"/>
@@ -837,7 +845,9 @@ function colabDisplayStatus(c){
 }
 setInterval(()=>{
   if(activeTab==='colaboradores') renderContent();
+  if(activeTab==='agendamentos') renderContent();
   if(tvActive && tvSlides[tvIndex] && tvSlides[tvIndex].type==='colaboradores') renderTvSlide();
+  if(tvActive && tvSlides[tvIndex] && tvSlides[tvIndex].type==='agendamentos') renderTvSlide();
 }, 20000);
 
 /* =========================================================
@@ -934,8 +944,29 @@ function renderContent(){
 
 const AG_STATUS_ORDER = ['aguardando','recebido','nao_recebido'];
 const AG_STATUS_MAP = { aguardando:['badge-amber','Aguardando'], recebido:['badge-teal','Recebido'], nao_recebido:['badge-red','Não recebido'] };
+/* Status exibido: "Não recebido" só existe se alguém marcar manualmente — nunca é automático.
+   "Recebido" é automático a partir do dia seguinte ao do agendamento (ex: hoje é dia 07,
+   agendamentos de dias anteriores a 07 já aparecem como recebidos sozinhos).
+   Hoje e datas futuras seguem o status manual (padrão: Aguardando). */
+function agendamentoDisplayStatus(r){
+  if(r.status==='nao_recebido') return 'nao_recebido';
+  if(r.status==='recebido') return 'recebido';
+  return r.data < todayISO() ? 'recebido' : 'aguardando';
+}
+/* Calcula o próximo status ao clicar no badge, considerando o que está sendo
+   exibido de fato (não o valor guardado) — assim o clique sempre muda o que
+   a pessoa vê. Para datas passadas, "Aguardando" não existe mais como opção
+   visível (já virou Recebido automaticamente), então ali alterna só entre
+   Recebido e Não recebido. */
+function nextAgendamentoStatus(r){
+  const isPast = r.data < todayISO();
+  const ordem = isPast ? ['recebido','nao_recebido'] : AG_STATUS_ORDER;
+  const atual = agendamentoDisplayStatus(r);
+  const idx = ordem.indexOf(atual);
+  return ordem[(idx+1)%ordem.length];
+}
 function badgeAgendamentoBtn(r){
-  const [cls,label] = AG_STATUS_MAP[r.status] || AG_STATUS_MAP.aguardando;
+  const [cls,label] = AG_STATUS_MAP[agendamentoDisplayStatus(r)] || AG_STATUS_MAP.aguardando;
   return `<span class="badge ${cls} badge-btn" data-action="toggle-status-agendamento" data-id="${r.id}"><span class="bdot"></span>${label}</span>`;
 }
 function badgeColaborador(status){
@@ -1350,7 +1381,7 @@ function resumoAgendamentosTexto(){
   const rows = state.agendamentos.filter(a=>a.data===dataAlvo);
   const cabecalho = `${state.config.titulo||'Painel Gestão à Vista'} — Agendamentos de ${fmtDate(dataAlvo)}`;
   if(rows.length===0) return `${cabecalho}\n\nNenhum agendamento cadastrado para esta data.`;
-  const linhas = rows.map(r=>`• ${vehicleLabel(r.veiculo)} — ${r.transportador} (${r.motorista}) — Senha ${r.senha||'—'} — Carga: ${r.carga} — Local: ${r.local} — Status: ${(AG_STATUS_MAP[r.status]||AG_STATUS_MAP.aguardando)[1]}`);
+  const linhas = rows.map(r=>`• ${vehicleLabel(r.veiculo)} — ${r.transportador} (${r.motorista}) — Senha ${r.senha||'—'} — Carga: ${r.carga} — Local: ${r.local} — Status: ${(AG_STATUS_MAP[agendamentoDisplayStatus(r)]||AG_STATUS_MAP.aguardando)[1]}`);
   return `${cabecalho}\n\n${linhas.join('\n')}`;
 }
 function afastamentosList(){
@@ -1446,7 +1477,7 @@ function rerenderPreservingFocus(){
 function bindFilterEvents(){
   const area = document.getElementById('contentArea');
   const agData = area.querySelector('#fltAgData');
-  if(agData) agData.addEventListener('input', ()=>{ filtroAgendamento.data = agData.value; rerenderPreservingFocus(); });
+  if(agData) agData.addEventListener('change', ()=>{ filtroAgendamento.data = agData.value; rerenderPreservingFocus(); });
   const agBusca = area.querySelector('#fltAgBusca');
   if(agBusca) agBusca.addEventListener('input', ()=>{ filtroAgendamento.busca = agBusca.value; rerenderPreservingFocus(); });
   const agClear = area.querySelector('#fltAgClear');
@@ -1527,7 +1558,7 @@ function handleAction(action, id){
     case 'add-agendamento': openAgendamentoModal(); break;
     case 'edit-agendamento': openAgendamentoModal(state.agendamentos.find(x=>x.id===id)); break;
     case 'del-agendamento': confirmDelete(()=>{ state.agendamentos = state.agendamentos.filter(x=>x.id!==id); afterMutate(); }); break;
-    case 'toggle-status-agendamento': { const it=state.agendamentos.find(x=>x.id===id); if(it){ it.status = AG_STATUS_ORDER[(AG_STATUS_ORDER.indexOf(it.status)+1)%AG_STATUS_ORDER.length]; afterMutate(); } break; }
+    case 'toggle-status-agendamento': { const it=state.agendamentos.find(x=>x.id===id); if(it){ it.status = nextAgendamentoStatus(it); afterMutate(); } break; }
 
     case 'add-colaborador': openColaboradorModal(); break;
     case 'edit-colaborador': openColaboradorModal(state.colaboradores.find(x=>x.id===id)); break;
@@ -2153,8 +2184,19 @@ function toggleTvPause(){
   vehicle.classList.toggle('paused', tvPaused);
   lines.classList.toggle('paused', tvPaused);
   forklift.classList.toggle('show', tvPaused);
-  if(tvPaused){ tvPauseStartedAt = performance.now(); }
-  else { tvPauseAccum += performance.now() - tvPauseStartedAt; }
+  if(tvPaused){
+    tvPauseStartedAt = performance.now();
+    // Posiciona a empilhadeira coladinha à esquerda de onde o caminhão parou,
+    // como se estivesse encostada nele para descarregar.
+    const strip = document.getElementById('tvRoadStrip');
+    const stripRect = strip.getBoundingClientRect();
+    const vehicleRect = vehicle.getBoundingClientRect();
+    const forkliftWidth = 40;
+    const leftPx = Math.max(2, (vehicleRect.left - stripRect.left) - forkliftWidth - 4);
+    forklift.style.left = leftPx + 'px';
+  } else {
+    tvPauseAccum += performance.now() - tvPauseStartedAt;
+  }
 }
 
 function currentSlideDuration(){
@@ -2210,7 +2252,7 @@ function renderTvSlide(){
 
 const AG_STATUS_TV_MAP = { aguardando:['var(--accent-amber-dim)','var(--accent-amber)','Aguardando'], recebido:['var(--accent-teal-dim)','var(--accent-teal)','Recebido'], nao_recebido:['var(--accent-red-dim)','#ff8fa3','Não recebido'] };
 function tvBadgeAgendamentoBtn(r){
-  const [bg,fg,label] = AG_STATUS_TV_MAP[r.status] || AG_STATUS_TV_MAP.aguardando;
+  const [bg,fg,label] = AG_STATUS_TV_MAP[agendamentoDisplayStatus(r)] || AG_STATUS_TV_MAP.aguardando;
   return `<span class="tv-badge clickable" data-tvtoggle="${r.id}" style="background:${bg}; color:${fg};"><span class="bdot" style="background:${fg}"></span>${label}</span>`;
 }
 const COLAB_STATUS_PRIORITY = {presente:0, almoco:0, folga:1, ausente:2, ferias:2};
@@ -2305,7 +2347,7 @@ document.getElementById('tvBody').addEventListener('click', e=>{
   if(!el) return;
   const id = el.dataset.tvtoggle;
   const it = state.agendamentos.find(x=>x.id===id);
-  if(it){ it.status = AG_STATUS_ORDER[(AG_STATUS_ORDER.indexOf(it.status)+1)%AG_STATUS_ORDER.length]; saveState(false); renderTvSlide(); }
+  if(it){ it.status = nextAgendamentoStatus(it); saveState(false); renderTvSlide(); }
 });
 
 /* =========================================================
